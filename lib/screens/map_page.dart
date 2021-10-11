@@ -37,6 +37,8 @@ class _MapPageState extends State<MapPage> {
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: const <Widget>[
+          BtnPolylines(),
+          BtnTracking(),
           BtnLocation(),
         ],
       ),
@@ -48,6 +50,7 @@ class _MapPageState extends State<MapPage> {
 
     final cameraPosition = CameraPosition(target: state.location, zoom: 15);
     final blocMap = BlocProvider.of<MapBloc>(context);
+    blocMap.add(UpdateLocation(state.location!));
 
     return GoogleMap(
       initialCameraPosition: cameraPosition,
@@ -55,6 +58,9 @@ class _MapPageState extends State<MapPage> {
       myLocationButtonEnabled: false,
       zoomControlsEnabled: false,
       onMapCreated: blocMap.initMap,
+      polylines: blocMap.state.polylines.values.toSet(),
+      onCameraMove: (cameraPosition) =>
+          blocMap.add(MoveMap(cameraPosition.target)),
     );
   }
 }
