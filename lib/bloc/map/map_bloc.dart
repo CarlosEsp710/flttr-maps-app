@@ -18,11 +18,18 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<StartTracking>((event, emit) => emit(_startTracking(event)));
     on<MoveMap>((event, emit) =>
         emit(state.copyWith(centralLocation: event.centralLocation)));
+    on<ManualRoute>((event, emit) => emit(_manualRoute(event)));
   }
 
   GoogleMapController? _mapController;
   Polyline _myRoute = Polyline(
     polylineId: PolylineId('my_route'),
+    width: 4,
+    color: Colors.black87,
+  );
+
+  Polyline _myDestination = Polyline(
+    polylineId: PolylineId('my_destination'),
     width: 4,
     color: Colors.black87,
   );
@@ -72,5 +79,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     }
 
     return state.copyWith(startTracking: !state.startTracking);
+  }
+
+  MapState _manualRoute(ManualRoute event) {
+    _myDestination = _myDestination.copyWith(pointsParam: event.route);
+
+    final currentPolylines = state.polylines;
+    currentPolylines['my_destination'] = _myDestination;
+
+    return state.copyWith(polylines: currentPolylines);
   }
 }

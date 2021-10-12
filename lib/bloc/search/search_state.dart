@@ -1,6 +1,15 @@
 part of 'search_bloc.dart';
 
 @immutable
-abstract class SearchState {}
+class SearchState {
+  final bool manual;
 
-class SearchInitial extends SearchState {}
+  const SearchState({
+    this.manual = false,
+  });
+
+  SearchState copyWith({
+    bool? manual,
+  }) =>
+      SearchState(manual: manual ?? this.manual);
+}

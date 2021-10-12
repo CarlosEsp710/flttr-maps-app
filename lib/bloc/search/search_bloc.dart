@@ -5,9 +5,9 @@ part 'search_event.dart';
 part 'search_state.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
-  SearchBloc() : super(SearchInitial()) {
-    on<SearchEvent>((event, emit) {
-      // TODO: implement event handler
-    });
+  SearchBloc() : super(const SearchState()) {
+    on<ActivatePinManual>((event, emit) => emit(state.copyWith(manual: true)));
+    on<DesactivatePinManual>(
+        (event, emit) => emit(state.copyWith(manual: false)));
   }
 }

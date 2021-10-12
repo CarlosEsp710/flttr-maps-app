@@ -20,3 +20,15 @@ class MoveMap extends MapEvent {
 
   MoveMap(this.centralLocation);
 }
+
+class ManualRoute extends MapEvent {
+  final List<LatLng> route;
+  final double distance;
+  final double duration;
+
+  ManualRoute({
+    required this.route,
+    required this.distance,
+    required this.duration,
+  });
+}

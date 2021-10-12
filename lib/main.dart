@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:maps/bloc/location/location_bloc.dart';
 import 'package:maps/bloc/map/map_bloc.dart';
+import 'package:maps/bloc/search/search_bloc.dart';
 
 import 'package:maps/routes/routes.dart';
 
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => LocationBloc()),
         BlocProvider(create: (_) => MapBloc()),
+        BlocProvider(create: (_) => SearchBloc()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
