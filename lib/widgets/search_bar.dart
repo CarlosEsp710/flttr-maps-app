@@ -26,9 +26,14 @@ class SearchBar extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 30),
         child: GestureDetector(
           onTap: () async {
+            final proximity =
+                BlocProvider.of<LocationBloc>(context).state.location;
+
+            final history = BlocProvider.of<SearchBloc>(context).state.history;
+
             final result = await showSearch(
               context: context,
-              delegate: SearchDestination(),
+              delegate: SearchDestination(proximity!, history),
             );
 
             _searchResult(context, result!);
@@ -59,11 +64,42 @@ class SearchBar extends StatelessWidget {
     );
   }
 
-  void _searchResult(BuildContext context, SearchResult result) {
+  void _searchResult(BuildContext context, SearchResult result) async {
     if (result.canel) return;
     if (result.manual!) {
       BlocProvider.of<SearchBloc>(context).add(ActivatePinManual());
       return;
     }
+
+    alert(context);
+
+    final trafficService = TrafficService();
+    final blocMap = BlocProvider.of<MapBloc>(context);
+
+    final start = BlocProvider.of<LocationBloc>(context).state.location;
+    final destination = result.position;
+
+    final response = await trafficService.getCoords(start!, destination!);
+
+    final geometry = response.routes[0].geometry;
+    final duration = response.routes[0].duration;
+    final distance = response.routes[0].distance;
+
+    final points = poly.Polyline.Decode(encodedString: geometry, precision: 6);
+
+    final List<LatLng> routeCoords = points.decodedCoords
+        .map((point) => LatLng(point[0], point[1]))
+        .toList();
+
+    blocMap.add(ManualRoute(
+      route: routeCoords,
+      distance: distance,
+      duration: duration,
+    ));
+
+    Navigator.of(context).pop();
+
+    final blocSearch = BlocProvider.of<SearchBloc>(context);
+    blocSearch.add(AddHistory(result));
   }
 }
