@@ -85,11 +85,13 @@ class _BuildPinManual extends StatelessWidget {
     final start = BlocProvider.of<LocationBloc>(context).state.location;
     final destination = BlocProvider.of<MapBloc>(context).state.centralLocation;
 
+    final infoDestination = await trafficService.getCoordsInfo(destination!);
+
     final blocMap = BlocProvider.of<MapBloc>(context);
 
     final trafficResponse = await trafficService.getCoords(
       start!,
-      destination!,
+      destination,
     );
 
     final route = trafficResponse.routes[0];
@@ -106,6 +108,7 @@ class _BuildPinManual extends StatelessWidget {
       route: routeCoords,
       distance: route.distance,
       duration: route.duration,
+      destination: infoDestination.features![0].textEs,
     ));
 
     Navigator.of(context).pop();

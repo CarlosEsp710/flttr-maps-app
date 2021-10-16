@@ -7,6 +7,7 @@ class MapState {
   final bool startTracking;
   final LatLng? centralLocation;
   final Map<String, Polyline> polylines;
+  final Map<String, Marker> markers;
 
   MapState({
     this.mapReady = false,
@@ -14,7 +15,9 @@ class MapState {
     this.startTracking = false,
     this.centralLocation,
     Map<String, Polyline>? polylines,
-  }) : polylines = polylines ?? {};
+    Map<String, Marker>? markers,
+  })  : polylines = polylines ?? {},
+        markers = markers ?? {};
 
   MapState copyWith({
     bool? mapReady,
@@ -22,6 +25,7 @@ class MapState {
     bool? startTracking,
     LatLng? centralLocation,
     Map<String, Polyline>? polylines,
+    Map<String, Marker>? markers,
   }) =>
       MapState(
         mapReady: mapReady ?? this.mapReady,
@@ -29,5 +33,6 @@ class MapState {
         startTracking: startTracking ?? this.startTracking,
         centralLocation: centralLocation ?? this.centralLocation,
         polylines: polylines ?? this.polylines,
+        markers: markers ?? this.markers,
       );
 }

@@ -25,10 +25,12 @@ class ManualRoute extends MapEvent {
   final List<LatLng> route;
   final double distance;
   final double duration;
+  final String? destination;
 
   ManualRoute({
     required this.route,
     required this.distance,
     required this.duration,
+    required this.destination,
   });
 }

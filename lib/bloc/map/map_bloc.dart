@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:flutter/material.dart' show Colors;
 
+import 'package:flutter/material.dart' show Colors, Offset;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import 'package:maps/helpers/helpers.dart';
 import 'package:maps/themes/map_style.dart';
 
 part 'map_event.dart';
@@ -18,7 +20,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<StartTracking>((event, emit) => emit(_startTracking(event)));
     on<MoveMap>((event, emit) =>
         emit(state.copyWith(centralLocation: event.centralLocation)));
-    on<ManualRoute>((event, emit) => emit(_manualRoute(event)));
+    on<ManualRoute>((event, emit) async => emit(await _manualRoute(event)));
   }
 
   GoogleMapController? _mapController;
@@ -81,12 +83,36 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     return state.copyWith(startTracking: !state.startTracking);
   }
 
-  MapState _manualRoute(ManualRoute event) {
+  Future<MapState> _manualRoute(ManualRoute event) async {
     _myDestination = _myDestination.copyWith(pointsParam: event.route);
 
     final currentPolylines = state.polylines;
     currentPolylines['my_destination'] = _myDestination;
 
-    return state.copyWith(polylines: currentPolylines);
+    final markerStart = Marker(
+      anchor: const Offset(0, 1.0),
+      markerId: MarkerId('start'),
+      position: event.route[0],
+      icon: await getMarkerStart(event.duration.toInt()),
+    );
+
+    final markerDestination = Marker(
+      anchor: const Offset(0.1, 1.0),
+      markerId: MarkerId('destination'),
+      position: event.route[event.route.length - 1],
+      icon: await getMarkerDestination(
+        event.destination.toString(),
+        event.distance,
+      ),
+    );
+
+    final markers = {...state.markers};
+    markers['start'] = markerStart;
+    markers['destination'] = markerDestination;
+
+    return state.copyWith(
+      polylines: currentPolylines,
+      markers: markers,
+    );
   }
 }

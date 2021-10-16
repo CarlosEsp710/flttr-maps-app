@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' show LatLng;
 
 import 'package:maps/helpers/debouncer.dart';
+import 'package:maps/models/info_response.dart';
 import 'package:maps/models/search_response.dart';
 import 'package:maps/models/traffic_response.dart';
 
@@ -71,5 +72,15 @@ class TrafficService {
 
     Future.delayed(const Duration(milliseconds: 201))
         .then((_) => timer.cancel());
+  }
+
+  Future<InfoResponse> getCoordsInfo(LatLng coords) async {
+    final url = '$_baseUrlGeo/mapbox.places';
+    final response = await _dio.get(
+        '$url/${coords.longitude},${coords.latitude}.json?access_token=$_apiKey&language=es');
+
+    final infoResponse = infoResponseFromJson(response.data);
+
+    return infoResponse;
   }
 }

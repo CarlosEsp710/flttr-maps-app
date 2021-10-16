@@ -84,6 +84,7 @@ class SearchBar extends StatelessWidget {
     final geometry = response.routes[0].geometry;
     final duration = response.routes[0].duration;
     final distance = response.routes[0].distance;
+    final destinationName = result.name;
 
     final points = poly.Polyline.Decode(encodedString: geometry, precision: 6);
 
@@ -95,6 +96,7 @@ class SearchBar extends StatelessWidget {
       route: routeCoords,
       distance: distance,
       duration: duration,
+      destination: destinationName,
     ));
 
     Navigator.of(context).pop();
